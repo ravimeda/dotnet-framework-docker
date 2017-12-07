@@ -30,7 +30,11 @@ RUN Invoke-WebRequest -UseBasicParsing https://download.visualstudio.microsoft.c
     Remove-Item -Force vs_buildtools.exe; `
     Remove-Item -Force -Recurse \"${Env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\"; `
     Remove-Item -Force -Recurse ${Env:TEMP}\*; `
-    Remove-Item -Force -Recurse \"${Env:ProgramData}\Package Cache\"
+    Remove-Item -Force -Recurse \"${Env:ProgramData}\Package Cache\"; `
+# ngen assemblies
+    $env:COMPLUS_NGenProtectedProcess_FeatureEnabled = 0; `
+    Start-Process \Windows\Microsoft.NET\Framework64\v4.0.30319\ngen.exe -ArgumentList 'update', '/Verbose' -NoNewWindow -Wait; `
+    Start-Process \Windows\Microsoft.NET\Framework\v4.0.30319\ngen.exe -ArgumentList 'update', '/Verbose' -NoNewWindow -Wait
 
 # Set PATH in one layer to keep image size down.
 RUN setx /M PATH $(${Env:PATH} `
